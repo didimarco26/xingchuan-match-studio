@@ -251,7 +251,22 @@ export async function matchInfluencers(
   if (isDemoMode()) {
     await demoLatency();
     // 带 refineNote = 用户点「调整 / 重新匹配」→ 返回第 2 轮（砍高报价补黑马）
-    return product.refineNote ? demoMatchRound2(stockN, incrN) : demoMatchResult(stockN, incrN);
+    const demoResult = product.refineNote ? demoMatchRound2(stockN, incrN) : demoMatchResult(stockN, incrN);
+    // 独立匹配站演示数据同样严格限定三池，不展示预置存量达人
+    if (MATCH_ONLY) {
+      return {
+        ...demoResult,
+        stock: [],
+        meta: {
+          ...demoResult.meta,
+          stockTotal: 0,
+          stockRows: 0,
+          stockPicked: 0,
+          stockCount: 0,
+        },
+      };
+    }
+    return demoResult;
   }
 
   // 产品画像 + 第二部分创意方向摘要 + 用户补充偏好（match_candidates / match_score 共用）

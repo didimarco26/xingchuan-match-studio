@@ -7,6 +7,7 @@
 import { useEffect, useState } from 'react';
 import { Clapperboard, X } from 'lucide-react';
 import { useDemoMode } from '../lib/demo';
+import { MATCH_ONLY } from '../match-only';
 
 export default function DemoControls() {
   const [on, setOn] = useDemoMode();
@@ -26,7 +27,9 @@ export default function DemoControls() {
               <span className="text-[12.5px] font-bold tracking-wide flex items-center gap-2">
                 <Clapperboard className="w-4 h-4" />
                 演示模式中 · 预置数据
-                <span className="hidden sm:inline font-normal opacity-90">（四大模块秒出结果，不走实时 AI / 网络）</span>
+                <span className="hidden sm:inline font-normal opacity-90">
+                  {MATCH_ONLY ? '（达人匹配三池预置结果，不走实时 AI / 网络）' : '（四大模块秒出结果，不走实时 AI / 网络）'}
+                </span>
               </span>
               <button
                 type="button"
