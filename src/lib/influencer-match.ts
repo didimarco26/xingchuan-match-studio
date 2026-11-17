@@ -278,7 +278,7 @@ export async function matchInfluencers(
     refineNote: product.refineNote || '',
   };
 
-  const localStock = loadLocalStockCandidates();
+  const localStock = MATCH_ONLY ? null : loadLocalStockCandidates();
   const publicMode = localStock !== null;
   onProgress?.({ phase: 'fetch', done: 0, total: 1, label: MATCH_ONLY
     ? '正在拉取优质星川达人库…'
@@ -288,7 +288,7 @@ export async function matchInfluencers(
   const data = await callFaasMatch({
     stage: 'match_candidates',
     product: prodPayload,
-    stock_count: stockN,
+    stock_count: MATCH_ONLY ? 0 : stockN,
     incr_count: incrN,
     // 独立匹配站：恒传空数组，明确跳过存量池（不读本机库、不回退平台旧存量库），只保留优质/增量池
     // 仅 GitHub 服务商版传入本机存量；空数组同样表示跳过存量池

@@ -12,6 +12,7 @@ import {
   formatFollowers, type InfluencerCandidate,
   PNEW_FANS_BUCKET_OPTIONS,
 } from '../lib/influencer-match';
+import { MATCH_ONLY } from '../match-only';
 
 function fmtTime(ms: number): string {
   const d = new Date(ms);
@@ -145,7 +146,9 @@ function HistoryDetail({ rec, onBack }: { rec: InfluencerHistoryRecord; onBack: 
         <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 text-[11.5px]">
           {c.industry && <p className="text-gray-500 break-words"><span className="text-gray-400">行业：</span>{c.industry}</p>}
           {c.category && <p className="text-gray-500 break-words"><span className="text-gray-400">类目：</span>{c.category}</p>}
-          <p className="text-gray-500 break-words"><span className="text-gray-400">存量数量：</span>{c.stockCount}</p>
+          {!MATCH_ONLY && (
+            <p className="text-gray-500 break-words"><span className="text-gray-400">存量数量：</span>{c.stockCount}</p>
+          )}
           <p className="text-gray-500 break-words"><span className="text-gray-400">增量数量：</span>{c.incrCount}</p>
           <p className="text-gray-500 break-words"><span className="text-gray-400">潜力数量：</span>{c.pnewCount}</p>
           <p className="text-gray-500 break-words"><span className="text-gray-400">星图数量：</span>{c.potCount}</p>
@@ -185,8 +188,8 @@ function HistoryDetail({ rec, onBack }: { rec: InfluencerHistoryRecord; onBack: 
         </div>
       )}
 
-      {/* 四库完整名单 */}
-      {POOL_META.map((m) => {
+      {/* 三库/四库完整名单 */}
+      {POOL_META.filter(m => !MATCH_ONLY || m.key !== 'stock').map((m) => {
         const list = pools[m.key];
         if (!list || list.length === 0) return null;
         return (

@@ -1306,7 +1306,7 @@ export default function InfluencerMatch({ product, framework, onGoKocFit }: {
 
   // —— 储存本次达人匹配结果到本地（IndexedDB，对外版）——
   const handleSaveMatch = async () => {
-    const stock = result?.stock || [];
+    const stock = MATCH_ONLY ? [] : (result?.stock || []);
     const incr = result?.incr || [];
     const pnew = pnewResult?.list || [];
     const pot = potResult?.list || [];
@@ -1319,7 +1319,8 @@ export default function InfluencerMatch({ product, framework, onGoKocFit }: {
         createdAt: Date.now(),
         conditions: {
           industry: product.industry, category: product.category,
-          stockCount, incrCount, pnewCount, potCount,
+          stockCount: MATCH_ONLY ? 0 : stockCount,
+          incrCount, pnewCount, potCount,
           tags: product.tags || [],
           pnewFilters: { ...pnewFilters },
           potFilters: { ...potFilters },
@@ -1377,16 +1378,25 @@ export default function InfluencerMatch({ product, framework, onGoKocFit }: {
       const round = isRefine ? matchRoundRef.current + 1 : 0;
       matchRoundRef.current = round;
       const parentId = isRefine ? lastMatchLogIdRef.current : undefined;
+      const matchCreators = MATCH_ONLY ? r.incr : [...r.stock, ...r.incr];
       const idPromise = trackUsage('达人匹配', product.productName, inParts.join('；'),
-        `匹配${r.stock.length + r.incr.length}位，存量${r.stock.length}位/增量${r.incr.length}位`,
+        MATCH_ONLY
+          ? `匹配${r.incr.length}位优质星川达人`
+          : `匹配${r.stock.length + r.incr.length}位，存量${r.stock.length}位/增量${r.incr.length}位`,
         {
           matchType: isRefine ? '优化重匹配' : '达人匹配',
           matchRound: round,
           adjustNote: isRefine ? noteTrim : '',
           parentId,
-          creatorCount: r.stock.length + r.incr.length,
-          creators: formatCreatorList([...r.stock, ...r.incr]),
-          fullInput: JSON.stringify({
+          creatorCount: matchCreators.length,
+          creators: formatCreatorList(matchCreators),
+          fullInput: JSON.stringify(MATCH_ONLY ? {
+            模式: isRefine ? '达人匹配-优化方向重匹配' : '达人匹配',
+            匹配轮次: round,
+            商品: product,
+            请求优质星川达人数: iN,
+            优化偏好: noteTrim,
+          } : {
             模式: isRefine ? '达人匹配-优化方向重匹配' : '达人匹配',
             匹配轮次: round,
             商品: product,
@@ -1474,14 +1484,17 @@ export default function InfluencerMatch({ product, framework, onGoKocFit }: {
   const doneBatches = progress?.phase === 'score' ? progress.done : 0;
   const pct = totalBatches > 0 ? Math.round((doneBatches / totalBatches) * 100) : (progress?.phase === 'fetch' ? 8 : 0);
 
-  // 「优化匹配方向」内联面板内容（存量/优质共用；作用于全部四类达人重新匹配）
+  // 「优化匹配方向」内联面板内容（独立匹配站仅作用于优质星川；原版作用于存量/优质主池）
   const renderRefineDirPanel = (onClose: () => void) => (
     <div>
       <p className="text-xs font-bold text-brand-800 flex items-center gap-1.5 mb-1">
-        <RefreshCw className="w-3.5 h-3.5 text-brand-600" /> 优化匹配方向（整体筛选 · 作用于全部四类达人）
+        <RefreshCw className="w-3.5 h-3.5 text-brand-600" />
+        {MATCH_ONLY ? '优化匹配方向（优质星川达人筛选）' : '优化匹配方向（整体筛选 · 作用于全部四类达人）'}
       </p>
       <p className="text-[11px] text-gray-500 leading-relaxed mb-2.5">
-        对推荐结果不满意？补充偏好（如偏生活类、侧重男性粉丝、需有同品类合作经验），点「重新匹配」后 AI 将对全部四类达人重新筛选评估。
+        {MATCH_ONLY
+          ? '对推荐结果不满意？补充偏好（如偏生活类、侧重男性粉丝、需有同品类合作经验），点「重新匹配」后 AI 将对优质星川达人重新筛选评估；潜力星川与星图推荐可使用各自板块的优化筛选。'
+          : '对推荐结果不满意？补充偏好（如偏生活类、侧重男性粉丝、需有同品类合作经验），点「重新匹配」后 AI 将对全部四类达人重新筛选评估。'}
       </p>
       <div className="flex flex-wrap gap-1.5 mb-2.5">
         {REFINE_CHIPS.map(c => (
@@ -2048,7 +2061,9 @@ export default function InfluencerMatch({ product, framework, onGoKocFit }: {
         onConfirm={() => void handleSaveMatch()}
         onClose={() => setSaveConfirmOpen(false)}
       >
-        将保存匹配条件、四库完整达人名单（含 ID/标签/分数等全字段）、各库数量、匹配轮次与调整说明，仅存储在本机浏览器。
+        {MATCH_ONLY
+          ? '将保存匹配条件、三库完整达人名单（含 ID/标签/分数等全字段）、各库数量、匹配轮次与调整说明，仅存储在本机浏览器。'
+          : '将保存匹配条件、四库完整达人名单（含 ID/标签/分数等全字段）、各库数量、匹配轮次与调整说明，仅存储在本机浏览器。'}
       </ConfirmDialog>
       <MatchHistoryModal open={historyOpen} onClose={() => setHistoryOpen(false)} />
     </div>
