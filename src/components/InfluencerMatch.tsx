@@ -1673,10 +1673,12 @@ export default function InfluencerMatch({ product, framework, onGoKocFit }: {
             className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-brand-600 to-brand-600 text-white text-sm font-bold shadow-lg shadow-brand-200 hover:shadow-xl hover:from-brand-700 hover:to-brand-700 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
           >
             {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Target className="w-4 h-4" />}
-            {loading ? '存量/优质匹配中…' : '匹配达人'}
+            {loading ? '优质达人匹配中…' : '匹配达人'}
           </button>
         </div>
-        <p className="text-[10px] text-gray-400 mt-2">{publicMode
+        <p className="text-[10px] text-gray-400 mt-2">{MATCH_ONLY
+          ? `优质星川单类最多 ${MAX_PER_POOL_MAIN} 位，潜力星川 / 星图推荐单类最多 ${MAX_PER_POOL_LARGE} 位；每类默认先展示 ${PAGE_SIZE} 位，点「点开展现剩余」一次展开全部、可再收起；潜力星川与星图推荐结果默认折叠，点标题长条展开；每个板块标题栏可「优化筛选」「一键导出」；优质星川先出结果，两类推荐异步追加（约 30-120 秒）；三个达人池沿用相同分析与匹配评估逻辑。`
+          : publicMode
           ? `我的存量达人仅取本机上传库（当前 ${localStockCount ?? 0} 位，未上传则跳过）；优质星川单类最多 ${MAX_PER_POOL_MAIN} 位，潜力星川 / 星图推荐单类最多 ${MAX_PER_POOL_LARGE} 位；每类默认先展示 ${PAGE_SIZE} 位，点「点开展现剩余」一次展开全部、可再收起；四类达人沿用相同分析与匹配评估逻辑。`
           : `存量星川 / 优质星川单类最多 ${MAX_PER_POOL_MAIN} 位，潜力星川 / 星图推荐单类最多 ${MAX_PER_POOL_LARGE} 位；每类默认先展示 ${PAGE_SIZE} 位，点「点开展现剩余」一次展开全部、可再收起；潜力星川与星图推荐结果默认折叠，点标题长条展开；每个板块标题栏可「优化筛选」「一键导出」；存量/优质先出结果，两类推荐异步追加（约 30-120 秒）`}</p>
       </div>
@@ -2010,7 +2012,7 @@ export default function InfluencerMatch({ product, framework, onGoKocFit }: {
       {(result || potResult || pnewResult) && (
         <div className="mt-6 rounded-xl bg-gray-50 border border-gray-100 px-4 py-3 flex items-center justify-between gap-3 flex-wrap">
           <p className="text-[11px] text-gray-500">
-            候选池：存量星川 <b className="text-gray-700 tabnum">{result?.stock.length ?? 0}</b> 位 / 优质星川 <b className="text-gray-700 tabnum">{result?.incr.length ?? 0}</b> 位 / 潜力星川推荐 <b className="text-violet-700 tabnum">{pnewMatching ? '…' : (pnewResult?.list.length ?? 0)}</b> 位 / 星图达人推荐 <b className="text-amber-700 tabnum">{potMatching ? '…' : (potResult?.list.length ?? 0)}</b> 位 经 AI 评估排序；完整名单可前往多维表格查看。
+            候选池：{!MATCH_ONLY && <>存量星川 <b className="text-gray-700 tabnum">{result?.stock.length ?? 0}</b> 位 / </>}优质星川 <b className="text-gray-700 tabnum">{result?.incr.length ?? 0}</b> 位 / 潜力星川推荐 <b className="text-violet-700 tabnum">{pnewMatching ? '…' : (pnewResult?.list.length ?? 0)}</b> 位 / 星图达人推荐 <b className="text-amber-700 tabnum">{potMatching ? '…' : (potResult?.list.length ?? 0)}</b> 位 经 AI 评估排序；完整名单可前往多维表格查看。
           </p>
           <a href={LARK_BASE_URL} target="_blank" rel="noreferrer"
              className="inline-flex items-center gap-1 text-[11px] font-bold text-brand-700 hover:text-brand-900">

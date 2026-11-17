@@ -1,4 +1,5 @@
 import { FAAS_URL } from './api';
+import { MATCH_ONLY } from '../match-only';
 
 // GitHub Pages 公开版工作台：访问授权 + 使用追踪 + 历史记录
 // 仅在 GitHub Pages 域名（或本地强制开关）下启用；内站（aime-app.bytedance.net）下所有函数静默 no-op。
@@ -408,11 +409,16 @@ export const GH_APP_TITLE = '星川决策工作台-服务商';
 export const GH_APP_SUBTITLE = '服务商决策工具 · 商品分析 / 内容创意（痛点分析·卖点分析·放大功效·加速转化） / 达人匹配 / 经营看板';
 const INTERNAL_APP_TITLE = '星川决策工作台-渠道';
 const INTERNAL_APP_SUBTITLE = '渠道决策工具 · 商品分析 / 内容创意（痛点分析·卖点分析·放大功效·加速转化） / 达人匹配 / 经营看板';
+// 独立达人匹配站品牌（编译期锁定，仅达人匹配 + 三个新增达人库）
+const MATCH_APP_TITLE = '星川达人匹配工作台';
+const MATCH_APP_SUBTITLE = '达人匹配工具 · 优质星川 / 潜力星川达人推荐 / 星图达人推荐 三库智能匹配';
 
 export function ghAppTitle(): string {
+  if (MATCH_ONLY) return MATCH_APP_TITLE;
   return isGhPages() ? GH_APP_TITLE : INTERNAL_APP_TITLE;
 }
 export function ghAppSubtitle(): string {
+  if (MATCH_ONLY) return MATCH_APP_SUBTITLE;
   return isGhPages() ? GH_APP_SUBTITLE : INTERNAL_APP_SUBTITLE;
 }
 

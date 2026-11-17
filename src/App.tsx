@@ -1810,6 +1810,7 @@ export default function App() {
     isFull ? '链接识别 → 商品信息（含二级类目底表）→ 服务商参数 → 100 分制适配分析 + AI 红线/策略'
     : isScore ? '链接识别 → 二级类目底表 → 服务商参数 → 实时 100 分制适配分析 + AI 红线/策略'
     : isScript ? '粘贴商品链接自动识别商品名/品牌/行业/客单价/卖点，先拆解 3-5 个拍摄 Brief，确认后生成四段式脚本'
+    : MATCH_ONLY ? '粘贴商品链接自动识别商品信息，结合内容偏好标签，在优质星川、潜力星川达人推荐、星图达人推荐三个达人池中智能匹配'
     : '粘贴商品链接自动识别商品信息，结合内容偏好标签，直接匹配存量星川/优质星川达人';
 
   // 左侧导览锚点（三段统一命名：商品分析 / 内容创意 / 达人匹配；子项按当前模式/状态动态展开）
@@ -2066,7 +2067,9 @@ export default function App() {
             {isMatch && (
             <p className="text-[11px] text-gray-500 mb-2.5 flex items-start gap-1.5">
               <Users className="w-3.5 h-3.5 text-brand-500 shrink-0 mt-0.5" />
-              <span>基于商品名/行业/卖点与上方内容偏好标签，从存量星川 + 优质星川达人库 AI 智能匹配，可在结果中调整数量后重跑。</span>
+              <span>{MATCH_ONLY
+                ? '基于商品名/行业/卖点与上方内容偏好标签，从优质星川、潜力星川达人推荐、星图达人推荐三个达人池 AI 智能匹配，可在结果中调整数量后重跑。'
+                : '基于商品名/行业/卖点与上方内容偏好标签，从存量星川 + 优质星川达人库 AI 智能匹配，可在结果中调整数量后重跑。'}</span>
             </p>
             )}
             <button
@@ -2079,7 +2082,7 @@ export default function App() {
                 : isMatch ? <Users className="w-[18px] h-[18px]" /> : isScript ? <FileText className="w-[18px] h-[18px]" /> : <Sparkles className="w-[18px] h-[18px]" />}
               {loading
                 ? (isScript ? '商品洞察与 Brief 方向拆解中…' : '商品分析 · 洞察 · 爆款参考 · Brief 拆解中…')
-                : isMatch ? '开始匹配达人（存量星川 + 优质星川 AI 智能匹配）→'
+                : isMatch ? (MATCH_ONLY ? '开始匹配达人（优质 + 潜力星川 + 星图推荐三库智能匹配）→' : '开始匹配达人（存量星川 + 优质星川 AI 智能匹配）→')
                 : isScript ? '生成商品洞察与拍摄 Brief（3-5 个方向）→'
                 : '① 商品分析完成，开始生成 ② 商品洞察 · 爆款素材参考 · Brief 拆解 →'}
             </button>
