@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#6d28d9" />
+    <meta name="description" content="星川达人匹配工作台：基于产品分析，在优质星川达人库、潜力星川达人推荐、星图达人推荐三个达人池中智能匹配与分层，支持筛选、优化重匹配与一键导出。" />
+    <!-- 封面图来自妙搭 CDN，no-referrer 规避防盗链导致的裂图 -->
+    <meta name="referrer" content="no-referrer" />
+    <link rel="preconnect" href="https://ark.cn-beijing.volces.com" crossorigin />
+    <title>星川达人匹配工作台</title>
+    <style>
+      /* 首屏加载态：在 React 挂载前立即展示，避免白屏 */
+      #boot-loader {
+        position: fixed; inset: 0; display: flex; flex-direction: column;
+        align-items: center; justify-content: center; gap: 18px;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+        background: linear-gradient(135deg, #f5f3ff 0%, #eef2ff 100%);
+        color: #4c1d95; z-index: 9999; transition: opacity .4s ease;
+      }
+      #boot-loader.hide { opacity: 0; pointer-events: none; }
+      .boot-spin {
+        width: 42px; height: 42px; border-radius: 50%;
+        border: 4px solid #ddd6fe; border-top-color: #7c3aed;
+        animation: boot-spin 0.8s linear infinite;
+      }
+      .boot-title { font-size: 17px; font-weight: 600; letter-spacing: .5px; }
+      .boot-sub { font-size: 12.5px; color: #6d28d9; opacity: .75; max-width: 280px; text-align: center; line-height: 1.6; }
+      @keyframes boot-spin { to { transform: rotate(360deg); } }
+    </style>
+  </head>
+  <body>
+    <div id="root">
+      <div id="boot-loader">
+        <div class="boot-spin"></div>
+        <div class="boot-title">星川达人匹配工作台</div>
+        <div class="boot-sub">正在加载三大达人库与匹配引擎…</div>
+      </div>
+      <script>
+        // GitHub Pages / Surge 公开版：启动屏与标签标题首帧即改为「服务商」版（内站保持「渠道」）
+        if (/(github\.io|xingchuan-advisor\.surge\.sh)/.test(location.hostname)) {
+          document.title = '星川决策工作台-服务商';
+          var bt = document.querySelector('.boot-title');
+          if (bt) bt.textContent = '星川决策工作台-服务商';
+        }
+      </script>
+      <script>
+        // 启动兜底：应用 12 秒内未挂载（弱网/JS 下载失败/初始化致命错误）→ 不再无限转圈，给出重试入口
+        (function () {
+          var shown = false;
+          function showFailsafe() {
+            if (shown || window.__xcAppLoaded) return;
+            shown = true;
+            try {
+              var el = document.getElementById('boot-loader');
+              if (!el) return;
+              var spin = el.querySelector('.boot-spin');
+              if (spin) spin.style.display = 'none';
+              var sub = el.querySelector('.boot-sub');
+              if (sub) sub.remove();
+              var title = el.querySelector('.boot-title');
+              if (title) title.textContent = '工作台加载较慢';
+              var box = document.createElement('div');
+              box.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:12px;margin-top:4px';
+              box.innerHTML =
+                '<div style="font-size:12.5px;color:#6d28d9;opacity:.8;max-width:280px;text-align:center;line-height:1.7">'
+                + '可能是网络较慢或脚本加载失败，请检查网络后重试。</div>'
+                + '<button onclick="location.reload()" style="padding:9px 28px;border:0;border-radius:10px;background:#7c3aed;color:#fff;font-size:13.5px;font-weight:600;cursor:pointer">刷新重试</button>'
+                + '<div style="font-size:11px;color:#9ca3af">若多次重试仍失败，请联系渠道管理员</div>';
+              el.appendChild(box);
+            } catch (e) { /* 兜底自身失败也不影响 */ }
+          }
+          window.__xcBootFailsafe = showFailsafe;
+          setTimeout(showFailsafe, 12000);
+          // 脚本/资源加载失败（capture 才能捕获资源错误）与未处理 Promise 异常：应用未挂载时触发兜底
+          window.addEventListener('error', function () { setTimeout(showFailsafe, 300); }, true);
+          window.addEventListener('unhandledrejection', function () { setTimeout(showFailsafe, 300); });
+        })();
+      </script>
+    </div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

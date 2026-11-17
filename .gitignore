@@ -1,0 +1,13 @@
+node_modules/
+dist/
+*.tsbuildinfo
+.DS_Store
+
+# 临时探针脚本
+faas/_probe*.js
+
+# 独立达人匹配站仅前端：剔除对内工作台后端与工具目录
+faas/
+tools/
+docs/
+node_modules

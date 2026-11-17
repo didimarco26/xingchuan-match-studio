@@ -1,0 +1,8 @@
+# 星图抓取运行产物（不入库）
+.xingtu-chrome-profile/
+screenshots/
+scrape-results.json
+scrape-results-test.json
+scrape-results*.tmp
+influencers-input.json
+node_modules/
