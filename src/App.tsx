@@ -1865,15 +1865,16 @@ export default function App() {
             <h1 className="text-[15px] font-bold text-ink-900 whitespace-nowrap">{ghAppTitle()}</h1>
             <p className="text-[11px] text-ink-400 whitespace-nowrap truncate">{ghAppSubtitle()}</p>
           </div>
-          {/* 历史记录 + 名字登录：对内对外通用，历史按名字归档 */}
+          {/* 历史记录：独立站免登录，直接打开本机历史（默认身份「本机用户」） */}
           <button
             type="button"
-            onClick={() => (wbUserName ? setHistoryOpen(true) : setLoginOpen(true))}
+            onClick={() => setHistoryOpen(true)}
             className="shrink-0 inline-flex items-center gap-1.5 h-9 px-3.5 rounded-[10px] bg-brand-50 border border-brand-100 text-[13px] font-semibold text-brand-700 hover:border-brand-300 transition-colors"
           >
             <History className="w-3.5 h-3.5" /> 历史记录
           </button>
-          {wbUserName ? (
+          {!MATCH_ONLY && (
+          wbUserName ? (
             <button
               type="button"
               title="切换或退出使用者名称"
@@ -1891,6 +1892,7 @@ export default function App() {
             >
               <User className="w-3.5 h-3.5" /> 登录
             </button>
+          )
           )}
           {!MATCH_ONLY && (
           <button
@@ -1943,8 +1945,8 @@ export default function App() {
             badge={isFull || isScore ? '商品分析' : isScript ? '内容创意' : '达人匹配'} />
 
           {/* 板块顶部操作条：引用爆品库（对外三板块 / 对内商品分析） + 内容历史（对外脚本） */}
-          {/* 顶栏操作：对外版/全链路/打分支持引用爆品库（demo 与正式版一致） */}
-          {(isGhPages() || isFull || isScore) && (
+          {/* 顶栏操作：对外版/全链路/打分支持引用爆品库（demo 与正式版一致）；独立匹配站免登录，爆品库依赖服务商登录态，整体隐藏 */}
+          {!MATCH_ONLY && (isGhPages() || isFull || isScore) && (
             <div className="flex flex-wrap items-center gap-2.5">
               <button
                 type="button" onClick={() => setBaopinOpen(true)}

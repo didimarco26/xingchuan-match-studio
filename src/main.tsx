@@ -1,10 +1,16 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import App from './App'
-import GhGate from './components/GhGate'
 import ErrorBoundary from './components/ErrorBoundary'
 import { applyGhBranding } from './lib/gh'
 import './index.css'
+
+// GitHub 公开版独立站：免登录开放，不再经过 GhGate 服务商主账号门禁。
+// 首次访问自动写入本机身份，供本地历史记录（IndexedDB / localStorage）归档使用；
+// 不产生任何账号信息，云端服务商台账（ghTrack）在无登录态时自动静默跳过。
+try {
+  if (!localStorage.getItem('xc_user_name')) localStorage.setItem('xc_user_name', '本机用户')
+} catch { /* localStorage 不可用时忽略，不阻塞应用 */ }
 
 // GitHub 公开版：浏览器标签标题 / 启动屏标题改为「星川决策工作台-服务商」（内站不生效）
 try { applyGhBranding(); } catch { /* 品牌覆盖失败不阻塞 */ }
@@ -44,9 +50,7 @@ try {
   createRoot(document.getElementById('root')!).render(
     <StrictMode>
       <ErrorBoundary>
-        <GhGate>
-          <App />
-        </GhGate>
+        <App />
       </ErrorBoundary>
     </StrictMode>,
   )

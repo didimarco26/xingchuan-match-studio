@@ -6,6 +6,7 @@ import {
 } from '../lib/concept-video';
 import { isDemoMode } from '../lib/demo';
 import { pickDemoConceptVideo } from '../lib/demo-data';
+import { isGhPages, getGhAuth } from '../lib/gh';
 
 // ============================================================
 // 四段式脚本模块（痛点分析/卖点分析/放大功效/加速转化）的「🎬 AI镜头」
@@ -93,6 +94,10 @@ export default function ConceptVideoButton({
   const busyText = elapsed < eta
     ? `⏳ 正在生成，预计约 ${Math.max(eta - elapsed, 1)} 秒`
     : '正在生成中，请稍候…';
+
+  // 公开站免登录开放后，AI 镜头服务端对 github.io 来源强制服务商鉴权；
+  // 无登录态且非演示模式时隐藏入口，避免点击后出现无意义的失败提示。
+  if (!isDemoMode() && isGhPages() && !getGhAuth()) return null;
 
   const start = async () => {
     if (phase === 'working') return;
