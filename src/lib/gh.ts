@@ -404,9 +404,9 @@ export function formatGhTime(ms: number): string {
   return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`;
 }
 
-// ---- 品牌名称：GitHub 公开版面向服务商，内站面向渠道，两处部署各显示各的名称 ----
-export const GH_APP_TITLE = '星川决策工作台-服务商';
-export const GH_APP_SUBTITLE = '服务商决策工具 · 商品分析 / 内容创意（痛点分析·卖点分析·放大功效·加速转化） / 达人匹配 / 经营看板';
+// ---- 品牌名称：GitHub 公开版为独立达人匹配站，内站面向渠道 ----
+export const GH_APP_TITLE = '星川达人匹配工作台-服务商';
+export const GH_APP_SUBTITLE = '服务商达人匹配工具 · 优质星川 / 潜力星川达人推荐 / 星图达人推荐 三库智能匹配';
 const INTERNAL_APP_TITLE = '星川决策工作台-渠道';
 const INTERNAL_APP_SUBTITLE = '渠道决策工具 · 商品分析 / 内容创意（痛点分析·卖点分析·放大功效·加速转化） / 达人匹配 / 经营看板';
 // 独立达人匹配站品牌（编译期锁定，仅达人匹配 + 三个新增达人库）
@@ -414,25 +414,26 @@ const MATCH_APP_TITLE = '星川达人匹配工作台';
 const MATCH_APP_SUBTITLE = '达人匹配工具 · 优质星川 / 潜力星川达人推荐 / 星图达人推荐 三库智能匹配';
 
 export function ghAppTitle(): string {
-  if (MATCH_ONLY) return MATCH_APP_TITLE;
+  if (MATCH_ONLY) return isGhPages() ? GH_APP_TITLE : MATCH_APP_TITLE;
   return isGhPages() ? GH_APP_TITLE : INTERNAL_APP_TITLE;
 }
 export function ghAppSubtitle(): string {
-  if (MATCH_ONLY) return MATCH_APP_SUBTITLE;
+  if (MATCH_ONLY) return isGhPages() ? GH_APP_SUBTITLE : MATCH_APP_SUBTITLE;
   return isGhPages() ? GH_APP_SUBTITLE : INTERNAL_APP_SUBTITLE;
 }
 
 // 运行时品牌覆盖：浏览器标签标题 + React 挂载前的启动屏标题（仅 GitHub 版生效）
 export function applyGhBranding() {
   if (!isGhPages()) return;
-  try { document.title = GH_APP_TITLE; } catch { /* noop */ }
+  const title = ghAppTitle();
+  try { document.title = title; } catch { /* noop */ }
   try {
     const bt = document.querySelector('.boot-title');
-    if (bt) bt.textContent = GH_APP_TITLE;
+    if (bt) bt.textContent = title;
   } catch { /* noop */ }
   try {
     const md = document.querySelector('meta[name="description"]');
-    if (md) md.setAttribute('content', '星川决策工作台-服务商：商品分析、四段式内容脚本（痛点分析·卖点分析·放大功效·加速转化）生成与达人匹配框架。');
+    if (md) md.setAttribute('content', '星川达人匹配工作台（服务商版）：基于产品分析，在优质星川、潜力星川达人推荐、星图达人推荐三个达人池中智能匹配与分层，支持筛选、优化重匹配与一键导出。');
   } catch { /* noop */ }
 }
 
