@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { X, User as UserIcon, Check, PencilLine } from 'lucide-react';
 import { getUserName, getUserDisplay, setUserName, clearUserName, hasLocalName } from '../lib/user';
 import { isGhPages, getGhAuth, clearGhAuth } from '../lib/gh';
+import { MATCH_ONLY } from '../match-only';
 
 // 轻量化登录弹窗：
 // - 对内：只需填写一个名字（无密码、无账号体系）
@@ -68,7 +69,9 @@ export default function NameLogin({ open, onClose }: { open: boolean; onClose: (
                   <p className="text-[11.5px] text-ink-500 mt-0.5">
                     {ghAuthed
                       ? '服务商账号（主账号/授权成员），云端台账按服务商归并'
-                      : `历史记录按该名字归档在本机${hasLocalName() ? '' : '（来自服务商登记名）'}`}
+                      : MATCH_ONLY
+                        ? `达人匹配历史记录按该名字归档在本机${hasLocalName() ? '' : '（来自服务商登记名）'}`
+                        : `历史记录按该名字归档在本机${hasLocalName() ? '' : '（来自服务商登记名）'}`}
                   </p>
                 </div>
               </div>
@@ -94,7 +97,9 @@ export default function NameLogin({ open, onClose }: { open: boolean; onClose: (
           ) : (
             <div>
               <p className="mt-2 text-[12.5px] text-ink-500 leading-relaxed">
-                填一个名字即可登录，<b className="text-ink-700">无需密码</b>。你的商品分析、脚本、达人匹配等使用记录会按这个名字保存在本机，方便随时回看。
+                {MATCH_ONLY
+                  ? <>填一个名字即可登录，<b className="text-ink-700">无需密码</b>。你的达人匹配使用记录会按这个名字保存在本机，方便随时回看。</>
+                  : <>填一个名字即可登录，<b className="text-ink-700">无需密码</b>。你的商品分析、脚本、达人匹配等使用记录会按这个名字保存在本机，方便随时回看。</>}
               </p>
               <div className="mt-4 flex items-center gap-2.5 h-12 px-4 rounded-2xl bg-[#F8F7FE] border border-[#E7E4F8] focus-within:border-brand-300 focus-within:bg-white transition-colors">
                 <UserIcon className="w-[18px] h-[18px] text-brand-500 shrink-0" />

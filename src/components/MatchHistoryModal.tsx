@@ -114,7 +114,7 @@ function CandidateFull({ c, rank }: { c: InfluencerCandidate; rank: number }) {
   );
 }
 
-// 历史详情（完整匹配参数 + 四库全量名单，不截断）
+// 历史详情（完整匹配参数 + 三库/四库全量名单，不截断）
 function HistoryDetail({ rec, onBack }: { rec: InfluencerHistoryRecord; onBack: () => void }) {
   const { conditions: c, pools, counts } = rec;
   const fansLabel = (keys: string[]) => keys

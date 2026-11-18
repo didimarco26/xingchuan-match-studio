@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { X, History, Loader2, ChevronLeft, Gauge, Clapperboard, Users, Flame, FileText, Sparkles } from 'lucide-react';
 import { ghGetHistory, getGhAuth, formatGhTime, isGhPages, type GhHistoryItem } from '../lib/gh';
 import { getUserName, getLocalHistory, displayIdentity } from '../lib/user';
+import { MATCH_ONLY } from '../match-only';
 
 const FEATURE_STYLE: Record<string, { cls: string; icon: typeof Gauge }> = {
   '商品分析': { cls: 'bg-violet-50 text-violet-700 border-violet-200', icon: Gauge },
@@ -63,6 +64,9 @@ export default function GhHistory({ open, onClose }: { open: boolean; onClose: (
         }
       }
       if (cancelled) return;
+      if (MATCH_ONLY) {
+        merged = merged.filter((it) => it.feature === '达人匹配');
+      }
       merged.sort((a, b) => b.time - a.time);
       setItems(merged);
     })();
@@ -83,7 +87,7 @@ export default function GhHistory({ open, onClose }: { open: boolean; onClose: (
           <div className="flex items-center gap-2">
             <History className="w-5 h-5 text-teal-600" />
             <div>
-              <h2 className="text-base font-bold text-slate-900">我的使用记录</h2>
+              <h2 className="text-base font-bold text-slate-900">{MATCH_ONLY ? '达人匹配使用记录' : '我的使用记录'}</h2>
               <p className="text-[11px] text-slate-400">{name ? `使用者：${displayIdentity(name)} · ` : ''}按时间倒序，点击单条查看详情</p>
             </div>
           </div>
@@ -103,7 +107,15 @@ export default function GhHistory({ open, onClose }: { open: boolean; onClose: (
             </div>
           ) : items.length === 0 ? (
             <div className="py-16 text-center text-sm text-slate-400">
-              暂无使用记录。<br />完成一次商品分析 / 脚本生成 / 达人匹配后，记录会出现在这里。
+              {MATCH_ONLY ? (
+                <>
+                  暂无达人匹配记录。<br />完成一次达人匹配后，记录会出现在这里。
+                </>
+              ) : (
+                <>
+                  暂无使用记录。<br />完成一次商品分析 / 脚本生成 / 达人匹配后，记录会出现在这里。
+                </>
+              )}
             </div>
           ) : detail ? (
             <div>
